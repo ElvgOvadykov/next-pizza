@@ -17,8 +17,8 @@ interface Props {
   name: string;
   className?: string;
   ingredients: Ingredient[];
-  items: ProductItem[];
-  onClickAddCart?: VoidFunction;
+  productItems: ProductItem[];
+  onClickAddCart: (productItemId: number, ingredientsIds: number[]) => void;
 }
 
 export const ChoosePizzaForm: React.FC<Props> = ({
@@ -26,7 +26,7 @@ export const ChoosePizzaForm: React.FC<Props> = ({
   imageUrl,
   ingredients,
   className,
-  items,
+  productItems,
   onClickAddCart,
 }) => {
   const {
@@ -35,26 +35,24 @@ export const ChoosePizzaForm: React.FC<Props> = ({
     selectedIngredients,
     sizesOptions,
     typesOptions,
+    selectedProductItem,
     setSize,
     setType,
     toggleIngredient,
-  } = usePizzaOptions(items);
+  } = usePizzaOptions(productItems);
 
   const { totalPrice, textDetails } = getPizzaDetails(
     type,
     size,
-    items,
+    productItems,
     ingredients,
     selectedIngredients
   );
 
   const handleClickAdd = () => {
-    onClickAddCart?.();
-    console.log({
-      size,
-      type,
-      ingredients: selectedIngredients,
-    });
+    if (selectedProductItem) {
+      onClickAddCart(selectedProductItem.id, Array.from(selectedIngredients ));
+    }
   };
 
   return (
@@ -93,7 +91,10 @@ export const ChoosePizzaForm: React.FC<Props> = ({
           </div>
         </div>
 
-        <Button className="h-[55px] px-10 text-base rounded-[18px] w-full mt-10">
+        <Button
+          className="h-[55px] px-10 text-base rounded-[18px] w-full mt-10"
+          onClick={handleClickAdd}
+        >
           Добавить в корзину за {totalPrice} ₽
         </Button>
       </div>

@@ -12,4 +12,5 @@ export { Filters } from "./filters";
 export { FilterCheckbox } from "./filter-checkbox";
 export { ChooseProductForm } from "./choose-product-form";
 export { CartButton } from "./cart-button";
+export { CountIconButton } from "./count-icon-button";
 export * from "./modal";

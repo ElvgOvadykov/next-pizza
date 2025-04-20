@@ -5,9 +5,9 @@ import {
   PizzaType,
   PIZZA_TYPES,
 } from "../constants/pizza";
-import React from "react";
 import { useSet } from "react-use";
 import { Variant } from "../components/shared/group-variants";
+import { useEffect, useState } from "react";
 
 type ReturnProps = {
   size: PizzaSize;
@@ -15,17 +15,21 @@ type ReturnProps = {
   selectedIngredients: Set<number>;
   sizesOptions: Variant[];
   typesOptions: Variant[];
+  selectedProductItem: ProductItem | undefined;
   setSize: (size: PizzaSize) => void;
   setType: (size: PizzaType) => void;
   toggleIngredient: (key: number) => void;
 };
 
 export const usePizzaOptions = (items: ProductItem[]): ReturnProps => {
-  const [size, setSize] = React.useState<PizzaSize>(20);
-  const [type, setType] = React.useState<PizzaType>(1);
+  const [size, setSize] = useState<PizzaSize>(20);
+  const [type, setType] = useState<PizzaType>(1);
   const [selectedIngredients, { toggle: toggleIngredient }] = useSet(
     new Set<number>([])
   );
+  const [selectedProductItem, setSelectedProductItem] = useState<
+    ProductItem | undefined
+  >();
 
   const availableSizes = new Set(items.map((item) => String(item.size)));
   const sizesOptions = PIZZA_SIZES.map<Variant>((size) => {
@@ -55,17 +59,20 @@ export const usePizzaOptions = (items: ProductItem[]): ReturnProps => {
     return type;
   });
 
-  React.useEffect(() => {
-    const isPizzaItemAvailable = Boolean(
-      items.find((item) => item.pizzaType === type && item.size === size)
+  useEffect(() => {
+    const isPizzaItem = items.find(
+      (item) => item.pizzaType === type && item.size === size
     );
 
-    if (!isPizzaItemAvailable) {
+    if (isPizzaItem) {
+      setSelectedProductItem(isPizzaItem);
+    } else {
       const firstBySizeItem = items.find((item) => item.size === size);
 
       if (firstBySizeItem?.size && firstBySizeItem?.pizzaType) {
         setSize(firstBySizeItem.size as PizzaSize);
         setType(firstBySizeItem.pizzaType as PizzaType);
+        setSelectedProductItem(firstBySizeItem);
       }
     }
   }, [type, size, items]);
@@ -76,6 +83,7 @@ export const usePizzaOptions = (items: ProductItem[]): ReturnProps => {
     selectedIngredients,
     sizesOptions,
     typesOptions,
+    selectedProductItem,
     setSize,
     setType,
     toggleIngredient,
