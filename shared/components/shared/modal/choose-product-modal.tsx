@@ -9,6 +9,7 @@ import { ChooseProductForm } from "../choose-product-form";
 import { ProductWithRelations } from "@/@types/prisma";
 import { ChoosePizzaForm } from "../choose-pizza-form";
 import { useCartStore } from "@/shared/store";
+import toast from "react-hot-toast";
 
 interface Props {
   product: ProductWithRelations;
@@ -18,24 +19,26 @@ interface Props {
 export const ChooseProductModal: React.FC<Props> = ({ product, className }) => {
   const router = useRouter();
 
-  const firstProductItem = product.productItems[0];
-  const isPizzaForm = Boolean(firstProductItem.pizzaType);
+  const isPizzaForm = Boolean(product.productItems[0].pizzaType);
+
   const addCartItem = useCartStore((state) => state.addCartItem);
+  const isLoading = useCartStore((state) => state.loading);
 
-  const onPizzaAddCartHandler = (
+  const onProductAddCartHandler = async (
     productItemId: number,
-    ingredientsIds: number[]
+    ingredientsIds?: number[]
   ) => {
-    addCartItem({
-      productItemId,
-      ingredientsIds,
-    });
-  };
-
-  const onProductAddCartHandler = () => {
-    addCartItem({
-      productItemId: firstProductItem.id,
-    });
+    try {
+      await addCartItem({
+        productItemId,
+        ingredientsIds,
+      });
+      toast.success(product.name + " добавили в корзину");
+      router.back();
+    } catch (error) {
+      toast.error("Не удалось добавить товар в корзину");
+      console.log(error);
+    }
   };
 
   return (
@@ -48,18 +51,15 @@ export const ChooseProductModal: React.FC<Props> = ({ product, className }) => {
       >
         {isPizzaForm ? (
           <ChoosePizzaForm
-            imageUrl={product.imageUrl}
-            name={product.name}
-            ingredients={product.ingredients}
-            productItems={product.productItems}
-            onClickAddCart={onPizzaAddCartHandler}
+            product={product}
+            onClickAddCart={onProductAddCartHandler}
+            loading={isLoading}
           />
         ) : (
           <ChooseProductForm
-            imageUrl={product.imageUrl}
-            name={product.name}
+            product={product}
             onClickAdd={onProductAddCartHandler}
-            price={firstProductItem.price}
+            loading={isLoading}
           />
         )}
       </DialogContent>

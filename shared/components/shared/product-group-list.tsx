@@ -6,11 +6,11 @@ import { Title } from "./title";
 import { ProductCard } from "./product-card";
 import { cn } from "@/shared/lib/utils";
 import { useCategoryStore } from "@/shared/store/category";
-import { Product } from "@prisma/client";
+import { ProductWithRelations } from "@/@types/prisma";
 
 interface Props {
   title: string;
-  items: any[];
+  items: ProductWithRelations[];
   categoryId: number;
   className?: string;
   listClassName?: string;
@@ -47,6 +47,7 @@ export const ProductGroupList: React.FC<Props> = ({
             name={product.name}
             imageUrl={product.imageUrl}
             price={product.productItems[0].price}
+            ingredients={product.ingredients}
           />
         ))}
       </div>

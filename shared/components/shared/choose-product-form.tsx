@@ -2,22 +2,28 @@ import { cn } from "@/shared/lib/utils";
 import React from "react";
 import { Title } from "./title";
 import { Button } from "../ui";
+import { ProductWithRelations } from "@/@types/prisma";
 
 interface Props {
-  imageUrl: string;
-  name: string;
+  product: ProductWithRelations;
   className?: string;
-  price: number;
-  onClickAdd: () => void;
+  loading?: boolean;
+  onClickAdd: (productItemId: number) => void;
 }
 
 export const ChooseProductForm: React.FC<Props> = ({
-  name,
-  imageUrl,
+  product,
   className,
-  price,
   onClickAdd,
+  loading,
 }) => {
+  const { imageUrl, name } = product;
+  const { price, id: firstProductItemId } = product.productItems[0];
+
+  const onClickAddHandler = () => {
+    onClickAdd(firstProductItemId);
+  };
+
   return (
     <div className={cn(className, "flex flex-1")}>
       <div className="flex items-center justify-center flex-1 relative w-full">
@@ -32,8 +38,9 @@ export const ChooseProductForm: React.FC<Props> = ({
         <Title text={name} size="md" className="font-extrabold mb-1" />
 
         <Button
+          loading={loading}
           className="h-[55px] px-10 text-base rounded-[18px] w-full mt-10"
-          onClick={onClickAdd}
+          onClick={onClickAddHandler}
         >
           Добавить в корзину за {price} ₽
         </Button>

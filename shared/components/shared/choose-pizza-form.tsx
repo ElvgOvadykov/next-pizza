@@ -7,28 +7,26 @@ import { Button } from "../ui";
 import { PizzaImage } from "./pizza-image";
 import { GroupVariants } from "./group-variants";
 import { PizzaSize, PizzaType } from "@/shared/constants/pizza";
-import { Ingredient, ProductItem } from "@prisma/client";
 import { IngredientItem } from "./ingredient-item";
 import { getPizzaDetails } from "@/shared/lib";
 import { usePizzaOptions } from "@/shared/hooks";
+import { ProductWithRelations } from "@/@types/prisma";
 
 interface Props {
-  imageUrl: string;
-  name: string;
+  product: ProductWithRelations;
   className?: string;
-  ingredients: Ingredient[];
-  productItems: ProductItem[];
+  loading?: boolean;
   onClickAddCart: (productItemId: number, ingredientsIds: number[]) => void;
 }
 
 export const ChoosePizzaForm: React.FC<Props> = ({
-  name,
-  imageUrl,
-  ingredients,
+  product,
   className,
-  productItems,
   onClickAddCart,
+  loading,
 }) => {
+  const { productItems, ingredients, name, imageUrl } = product;
+
   const {
     type,
     size,
@@ -51,7 +49,7 @@ export const ChoosePizzaForm: React.FC<Props> = ({
 
   const handleClickAdd = () => {
     if (selectedProductItem) {
-      onClickAddCart(selectedProductItem.id, Array.from(selectedIngredients ));
+      onClickAddCart(selectedProductItem.id, Array.from(selectedIngredients));
     }
   };
 
@@ -92,6 +90,7 @@ export const ChoosePizzaForm: React.FC<Props> = ({
         </div>
 
         <Button
+          loading={loading}
           className="h-[55px] px-10 text-base rounded-[18px] w-full mt-10"
           onClick={handleClickAdd}
         >

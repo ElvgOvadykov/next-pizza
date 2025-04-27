@@ -10,7 +10,7 @@ export const useQueryFilters = (filters: Filters) => {
     const params = {
       ...filters.prices,
       ingredients: Array.from(filters.selectedIngredients),
-      sizes: Array.from(filters.sizes),
+      pizzaSizes: Array.from(filters.pizzaSizes),
       pizzaTypes: Array.from(filters.pizzaTypes),
     };
 

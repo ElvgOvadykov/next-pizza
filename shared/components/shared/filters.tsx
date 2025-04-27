@@ -43,10 +43,10 @@ export const Filters: React.FC<Props> = ({ className }) => {
       />
 
       <CheckboxFiltersGroup
-        name="sizes"
+        name="pizzaSizes"
         title="Размеры"
         className="mb-5"
-        selected={filters.sizes}
+        selected={filters.pizzaSizes}
         items={[
           { text: "20 см", value: "20" },
           { text: "30 см", value: "30" },
