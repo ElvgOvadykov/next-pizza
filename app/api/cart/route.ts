@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
     const response = NextResponse.json(updatedUserCart);
 
     if (!isHasToken) {
-      response.cookies.set("token", token);
+      response.cookies.set("cartToken", token);
     }
 
     return response;
