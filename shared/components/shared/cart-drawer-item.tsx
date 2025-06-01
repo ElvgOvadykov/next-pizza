@@ -9,6 +9,7 @@ interface Props extends CartItemProps {
   onCountButtonClick: (type: CountButtonType) => void;
   onRemoveButtonClick: () => void;
   className?: string;
+  disabled?: boolean;
 }
 
 export const CartDrawerItem: React.FC<Props> = ({
@@ -18,11 +19,20 @@ export const CartDrawerItem: React.FC<Props> = ({
   price,
   quantity,
   details,
+  disabled,
   onCountButtonClick,
   onRemoveButtonClick,
 }) => {
   return (
-    <div className={cn("flex bg-white p-5 gap-6 mb-2", className)}>
+    <div
+      className={cn(
+        "flex bg-white p-5 gap-6 mb-2",
+        {
+          "opacity-50 pointer-events-none": disabled,
+        },
+        className
+      )}
+    >
       <CartItem.Image src={imageUrl} />
 
       <div className="flex-1">

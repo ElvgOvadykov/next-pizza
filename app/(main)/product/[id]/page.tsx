@@ -1,4 +1,4 @@
-import { Container, GroupVariants, Title } from "@/shared/components/shared";
+import { ChooseForm, Container } from "@/shared/components/shared";
 import { prisma } from "@/prisma/prisma-client";
 import { notFound } from "next/navigation";
 
@@ -9,7 +9,22 @@ type ProductPageProps = {
 export default async function ProductPage({
   params: { id },
 }: ProductPageProps) {
-  const product = await prisma.product.findFirst({ where: { id: Number(id) } });
+  const product = await prisma.product.findFirst({
+    where: { id: Number(id) },
+    include: {
+      ingredients: true,
+      productItems: true,
+      category: {
+        include: {
+          include: {
+              products: {
+              productItems: true,
+            },
+          },
+        },
+      },
+    },
+  });
 
   if (!product) {
     return notFound();
@@ -17,26 +32,7 @@ export default async function ProductPage({
 
   return (
     <Container className="flex flex-col my-10">
-      <div className="flex flex-1">
-        <div className="w-[490px] bg-[#FCFCFC] p-7">
-          <Title
-            text={product.name}
-            size="md"
-            className="font-extrabold mb-1"
-          />
-          <p className="text-gray-400">
-            Lorem ipsum dolor sit amet consectetur
-          </p>
-          <GroupVariants
-            value="2"
-            items={[
-              { name: "Маленькая", value: "1" },
-              { name: "Средняя", value: "2" },
-              { name: "Большая", value: "3" },
-            ]}
-          />
-        </div>
-      </div>
+      <ChooseForm product={product} />
     </Container>
   );
 }
